@@ -9,14 +9,33 @@ import string
 import re
 import requests 
 import pandas as pd
-from config import config
+# from config import config
 
 
-job='front end applications build frontend application using react typescript back end applications infrastructure build sdks backend solana contracts maintain chain infrastructure code review ensure code quality software reliability automated test implementations ui ux testing processes'
-scaler = pickle.load(open(config.scaler_path, 'rb'))
-vectorizer = pickle.load(open(config.vectorizer_path, 'rb'))
-model = pickle.load(open(config.model_path, 'rb'))
-data = pd.read_csv(config.data_path)
+data_path = 'artifacts/cleaned_users.csv'
+model_path = 'artifacts/model.pkl'
+scaler_path = 'artifacts/scaler.pkl'
+vectorizer_path = 'artifacts/vectorizer.pkl'
+
+from pathlib import Path
+# from unittest.case import doModuleCleanups
+
+__version__ = "0.1.0"
+
+BASE_DIR = Path(__file__).resolve(strict=True).parent
+
+# df=pd.read_csv(f"{BASE_DIR}/nft_mod.csv")   
+# df2=pd.read_csv(f"{BASE_DIR}/nftmusic_blockbeats_solana.csv")  
+# with open(f"{BASE_DIR}/savemodel.pkl", "rb") as f:
+#     model = pickle.load(f)
+
+
+# f"{BASE_DIR}/
+
+scaler = pickle.load(open(f"{BASE_DIR}/"+scaler_path, 'rb'))
+vectorizer = pickle.load(open(f"{BASE_DIR}/"+vectorizer_path, 'rb'))
+model = pickle.load(open(f"{BASE_DIR}/"+model_path, 'rb'))
+data = pd.read_csv(f"{BASE_DIR}/"+data_path)
 
 
 stop_words = stopwords.words('english')
@@ -56,12 +75,14 @@ def find_dev(text):
     scaled_vec = scaler.transform(vec.toarray())
     dists, idx = model.kneighbors(scaled_vec)
     df = data.iloc[idx[0]].reset_index(drop=True)
+    l=[]
     for i in range(len(data.iloc[idx[0]])):
         print("USER ",i)
-        print(match(text,data.iloc[idx[0][i]].content))
-
+        # print(match(text,data.iloc[idx[0][i]].content))
+        l.append(match(text,data.iloc[idx[0][i]].content))
+    print(l)
+    df['matches']=l
     return pd.DataFrame(df)
 
-print(find_dev(job))
 
     

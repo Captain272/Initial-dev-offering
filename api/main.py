@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from typing import Any, Dict, List, Union
-from model.model import query
-from model.model import __version__ as model_version
+from model.app import find_dev
+from model.app import __version__ as model_version
 import uvicorn
 
 app = FastAPI()
@@ -14,9 +14,8 @@ app = FastAPI()
 @app.post("/")
 def home(request: Dict[Any, Any]):
     l=list(request.values())
-    lk=list(map(int, l))
-    k=query(lk)
-    return {"song_names_top":k[0],"song_names_alt":k[1]}
+    df=find_dev(l[0])
+    return {"developers":[df]}
 
 
 
